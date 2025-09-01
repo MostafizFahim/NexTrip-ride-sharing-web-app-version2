@@ -1,0 +1,21 @@
+.RideServiceContainer {
+  background-color: #898dff;
+}
+.RideServicesRow,
+.RideServicesRowCol {
+  padding: 30px 0;
+  padding-right: 45px;
+}
+.RideServicesRow,
+.RideServicesRowCol:last-child {
+  padding-right: 0;
+}
+.RideServicesRowCol h4 {
+  font-weight: 700;
+  margin: 14px 0;
+  color: #fff;
+}
+.RideServicesRowCol .serviceIcon {
+  font-size: 35px;
+  color: #fff;
+}
