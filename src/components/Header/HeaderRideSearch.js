@@ -1,133 +1,172 @@
 import React, { useState } from "react";
-import PassengerDetails from "./PassengerDetails";
-import { FaUser } from "react-icons/fa";
-import { useHistory } from "react-router-dom";
-import axios from "axios";
-import places from "../../placesApi/places.js";
 import { toast } from "react-toastify";
 import AOS from "aos";
-import API from "../../API";
+import places from "../../placesApi/places.js";
+import "./HeaderRideSearch.css";
+
+const PRICING = {
+  Bus: { BASE_FARE: 20, PER_KM: 5 },
+  CNG: { BASE_FARE: 40, PER_KM: 18 },
+  "Auto Rickshaw": { BASE_FARE: 30, PER_KM: 15 },
+  Car: { BASE_FARE: 60, PER_KM: 22 },
+  Bike: { BASE_FARE: 25, PER_KM: 12 },
+};
+
+const toRadians = (deg) => (deg * Math.PI) / 180;
+const haversineKm = (a, b) => {
+  const R = 6371;
+  const dLat = toRadians(b.lat - a.lat);
+  const dLon = toRadians(b.lng - a.lng);
+  const lat1 = toRadians(a.lat);
+  const lat2 = toRadians(b.lat);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+};
 
 const HeaderRideSearch = () => {
-  const [passengerNeeded, setPassengerNeeded] = useState(0);
-  const [show, setShow] = useState(false);
   const [formData, setFormData] = useState({
     goingFrom: "",
     goingTo: "",
-    date: "",
+    vehicleType: "",
   });
-  const [publishRides, setPublishRides] = useState([]);
-  const history = useHistory();
+  const [estimate, setEstimate] = useState(null);
 
-  const plus = () => {
-    setPassengerNeeded(passengerNeeded + 1);
-  };
-  const minus = () => {
-    setPassengerNeeded(passengerNeeded - 1);
-  };
-
-  // show dropdown content
-  const showDropdown = () => {
-    setShow(!show);
-  };
-
-  // search handler
-  const handleSearch = async (e) => {
+  const handleEstimate = (e) => {
     e.preventDefault();
-    try {
-      if (
-        formData.goingFrom.length > 0 &&
-        formData.goingTo.length > 0 &&
-        formData.date.length > 0
-      ) {
-        const { data } = await API.get("publishride");
-        // setPublishRides(data);
-        history.push({
-          pathname: "/availablerides",
-          state: {
-            goingFrom: formData.goingFrom,
-            goingTo: formData.goingTo,
-            date: formData.date,
-            passengerNeeded: passengerNeeded,
-            data: data,
-          },
-        });
-      } else {
-        toast.warn("Please fill all the fields");
-      }
-    } catch (err) {
-      console.log(err);
+
+    if (!formData.goingFrom || !formData.goingTo || !formData.vehicleType) {
+      toast.warn("Please select From, To, and Vehicle Type.");
+      return;
     }
+    if (formData.goingFrom === formData.goingTo) {
+      toast.warn("Departure and destination cannot be the same.");
+      return;
+    }
+
+    const from = places.find((p) => p.location === formData.goingFrom);
+    const to = places.find((p) => p.location === formData.goingTo);
+    if (!from?.lat || !to?.lat) {
+      toast.error("Selected locations are missing coordinates.");
+      return;
+    }
+
+    const distanceKm = Math.max(1, haversineKm(from, to));
+    const { BASE_FARE, PER_KM } = PRICING[formData.vehicleType];
+    const distanceFare = PER_KM * distanceKm;
+    const total = Math.round(BASE_FARE + distanceFare);
+
+    setEstimate({
+      vehicleType: formData.vehicleType,
+      distanceKm: Number(distanceKm.toFixed(2)),
+      base: BASE_FARE,
+      distanceFare: Math.round(distanceFare),
+      total,
+    });
   };
 
   return (
-    <section data-aos="fade-right" data-aos-duration="1200">
-      <h2>Search for a Ride</h2>
-      <form onSubmit={(e) => handleSearch(e)}>
-        <div className="mb-3">
+    <section
+      className="header-ride-search"
+      data-aos="fade-right"
+      data-aos-duration="1200"
+    >
+      <h2 className="search-title">Fare Estimator</h2>
+
+      <form onSubmit={handleEstimate} className="ride-search-form">
+        {/* From */}
+        <div className="form-group">
           <select
-            type="text"
-            className="form-control"
+            className="form-control ride-select"
             name="goingFrom"
-            placeholder="Going from..."
-            onChange={(e) => {
-              setFormData({ ...formData, goingFrom: e.target.value });
-            }}
+            onChange={(e) =>
+              setFormData({ ...formData, goingFrom: e.target.value })
+            }
             value={formData.goingFrom}
+            required
           >
-            {places.map((place) => {
-              const { id, location } = place;
-              return <option key={id}>{location}</option>;
-            })}
+            <option value="">Select departure location</option>
+            {places.map(({ id, location }) => (
+              <option key={id} value={location}>
+                {location}
+              </option>
+            ))}
           </select>
         </div>
-        <div className="mb-3">
+
+        {/* To */}
+        <div className="form-group">
           <select
-            type="text"
-            className="form-control"
+            className="form-control ride-select"
             name="goingTo"
-            placeholder="Going to..."
             onChange={(e) =>
               setFormData({ ...formData, goingTo: e.target.value })
             }
             value={formData.goingTo}
             required
           >
-            {places.map((place) => {
-              const { id, location } = place;
-              return <option key={id}>{location}</option>;
-            })}
+            <option value="">Select destination</option>
+            {places.map(({ id, location }) => (
+              <option key={id} value={location}>
+                {location}
+              </option>
+            ))}
           </select>
         </div>
-        <div className=" mainInnerRow">
-          <div className="date">
-            <input
-              type="date"
-              name="date"
-              onChange={(e) =>
-                setFormData({ ...formData, date: e.target.value })
-              }
-              value={formData.date}
-            />
-          </div>
-          <div className="user" onClick={showDropdown}>
-            <FaUser className="userIcon" />
-            <span>{passengerNeeded}</span>
-          </div>
-          {show ? (
-            <PassengerDetails
-              plus={plus}
-              minus={minus}
-              passengerNeeded={passengerNeeded}
-            />
-          ) : null}
-          <div className="searchBtn">
-            <button className="btn btn-outline-success search" type="submit">
-              Search
-            </button>
-          </div>
+
+        {/* Vehicle Type */}
+        <div className="form-group">
+          <select
+            className="form-control ride-select"
+            name="vehicleType"
+            onChange={(e) =>
+              setFormData({ ...formData, vehicleType: e.target.value })
+            }
+            value={formData.vehicleType}
+            required
+          >
+            <option value="">Select vehicle type</option>
+            <option value="Bus">Bus</option>
+            <option value="CNG">CNG</option>
+            <option value="Auto Rickshaw">Auto Rickshaw</option>
+            <option value="Car">Car</option>
+            <option value="Bike">Bike</option>
+          </select>
+        </div>
+
+        <div className="search-btn-container">
+          <button className="btn search-btn" type="submit">
+            Estimate Fare
+          </button>
         </div>
       </form>
+
+      {estimate && (
+        <div className="fare-result" data-aos="fade-up" data-aos-duration="800">
+          <h3 className="fare-title">
+            Estimated Fare ({estimate.vehicleType})
+          </h3>
+          <ul className="fare-breakdown">
+            <li>
+              Distance: <strong>{estimate.distanceKm} km</strong>
+            </li>
+            <li>
+              Base: <strong>{estimate.base} BDT</strong>
+            </li>
+            <li>
+              Distance fare: <strong>{estimate.distanceFare} BDT</strong>
+            </li>
+          </ul>
+          <div className="fare-total">
+            Total: <strong>{estimate.total} BDT</strong>
+          </div>
+          <p className="fare-note">
+            This is an estimate. Actual fare may vary with route, traffic, and
+            wait time.
+          </p>
+        </div>
+      )}
     </section>
   );
 };

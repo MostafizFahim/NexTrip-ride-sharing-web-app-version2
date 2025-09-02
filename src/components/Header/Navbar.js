@@ -35,7 +35,7 @@ const Navbar = () => {
       >
         <div className="container-fluid">
           <Link to={"/"} className="navbar-brand">
-            TrustiCar
+            NexTrip
           </Link>
           <button
             className="navbar-toggler"
@@ -62,7 +62,7 @@ const Navbar = () => {
               </li>
               <li className="nav-item">
                 <Link to="/search" className="nav-link" href="#">
-                  Search
+                  Fare Estimator
                 </Link>
               </li>
             </ul>

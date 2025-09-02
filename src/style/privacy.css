@@ -1,0 +1,259 @@
+.privacy-root {
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  min-height: 100vh;
+  padding: 40px 0 80px;
+}
+
+.privacy-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 20px rgba(111, 66, 193, 0.08);
+}
+
+.privacy-header {
+  border-bottom: 2px solid #f3f4f6;
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+}
+
+.privacy-title {
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #4b2e83;
+  letter-spacing: -0.5px;
+}
+
+.privacy-updated {
+  font-size: 15px;
+  color: #6b7280;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.privacy-updated i {
+  font-size: 14px;
+}
+
+.privacy-container section {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #f9fafb;
+}
+
+.privacy-container section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.privacy-container h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.privacy-container h2 i {
+  color: #6f42c1;
+  font-size: 20px;
+}
+
+.privacy-container p,
+.privacy-container li {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #4b5563;
+  margin-bottom: 12px;
+}
+
+.privacy-container ul {
+  padding-left: 24px;
+  margin: 16px 0;
+}
+
+.privacy-container li {
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.privacy-container li:before {
+  content: "•";
+  color: #6f42c1;
+  font-weight: bold;
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+}
+
+.privacy-highlight {
+  background-color: #f5f0fa;
+  padding: 20px;
+  border-radius: 12px;
+  border-left: 4px solid #6f42c1;
+  margin: 20px 0;
+}
+
+.privacy-contact {
+  background: linear-gradient(135deg, #faf7fd 0%, #f5f0fa 100%);
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e6dbf5;
+  margin-top: 32px;
+}
+
+.privacy-contact h3 {
+  color: #6f42c1;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.privacy-contact a {
+  color: #6f42c1;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.privacy-contact a:hover {
+  color: #4b2e83;
+  text-decoration: underline;
+}
+
+/* Back to top button */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #6f42c1;
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(111, 66, 193, 0.3);
+  transition: all 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 1000;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.back-to-top:hover {
+  background: #4b2e83;
+  transform: translateY(-3px);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .privacy-container {
+    padding: 24px;
+    margin: 0 16px;
+  }
+  
+  .privacy-title {
+    font-size: 28px;
+  }
+  
+  .privacy-container h2 {
+    font-size: 20px;
+  }
+  
+  .privacy-container p,
+  .privacy-container li {
+    font-size: 15px;
+  }
+  
+  .back-to-top {
+    bottom: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .privacy-root {
+    background: linear-gradient(135deg, #0f0f12 0%, #1a1a23 100%);
+  }
+  
+  .privacy-container {
+    background: #141419;
+    border-color: #3b2d5c;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .privacy-title {
+    color: #d8cafe;
+  }
+  
+  .privacy-updated {
+    color: #b7b7c3;
+  }
+  
+  .privacy-container h2 {
+    color: #efe9ff;
+  }
+  
+  .privacy-container h2 i {
+    color: #8a5be8;
+  }
+  
+  .privacy-container p,
+  .privacy-container li {
+    color: #b7b7c3;
+  }
+  
+  .privacy-container li:before {
+    color: #8a5be8;
+  }
+  
+  .privacy-container section {
+    border-bottom-color: #2a243d;
+  }
+  
+  .privacy-header {
+    border-bottom-color: #2a243d;
+  }
+  
+  .privacy-highlight {
+    background-color: #1c172a;
+    border-left-color: #8a5be8;
+  }
+  
+  .privacy-contact {
+    background: linear-gradient(135deg, #1a1526 0%, #211b33 100%);
+    border-color: #3b2d5c;
+  }
+  
+  .privacy-contact h3 {
+    color: #bfa6ff;
+  }
+  
+  .privacy-contact a {
+    color: #bfa6ff;
+  }
+  
+  .privacy-contact a:hover {
+    color: #d8cafe;
+  }
+}

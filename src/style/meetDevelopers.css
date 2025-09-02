@@ -1,0 +1,205 @@
+/* meetDevelopers.css */
+
+/* Page background & spacing */
+.dev-page {
+  background: #ffffff;
+  padding: 40px 16px 80px;
+  position: relative;
+  z-index: 0;
+  box-sizing: border-box;
+}
+
+/* Center the inner container and text */
+.dev-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 12px;
+  text-align: center;
+}
+
+/* Header */
+.dev-header { 
+  margin-bottom: 28px; 
+}
+
+.dev-header h1 {
+  margin: 0 0 8px;
+  color: #4b2e83;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  font-size: 2.25rem;
+}
+
+.dev-header p {
+  margin: 0;
+  color: #5f5f6e;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Cards row: flex + centered */
+.dev-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  align-items: stretch;
+}
+
+/* Card */
+.dev-card {
+  width: 280px;
+  background: #ffffff;
+  border: 1px solid #e6dbf5;
+  border-radius: 16px;
+  padding: 24px 20px;
+  box-shadow: 0 6px 18px rgba(111, 66, 193, 0.10);
+  transition: transform 0.18s ease, box-shadow 0.2s ease;
+  
+  /* Center all content */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dev-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(111, 66, 193, 0.15);
+}
+
+/* Avatar */
+.dev-avatar-wrap {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #6f42c1;
+  background: #f5f0fa;
+}
+
+.dev-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Name & Role */
+.dev-name {
+  margin: 8px 0 4px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #2a2455;
+  text-align: center;
+}
+
+.dev-role {
+  margin: 0 0 16px;
+  color: #6b6b7a;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* Bio text */
+.dev-bio {
+  margin-bottom: 20px;
+  color: #555;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-align: center;
+  flex-grow: 1;
+}
+
+/* Socials bar */
+.dev-socials {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.dev-social {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid #e6dbf5;
+  color: #6f42c1;
+  background: #faf7fd;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.dev-social:hover {
+  background: #6f42c1;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(111, 66, 193, 0.25);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dev-header h1 {
+    font-size: 1.75rem;
+  }
+  
+  .dev-header p {
+    font-size: 1rem;
+  }
+  
+  .dev-card {
+    width: 100%;
+    max-width: 400px;
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .dev-page { 
+    background: #0f0f12; 
+  }
+  
+  .dev-header h1 { 
+    color: #d8cafe; 
+  }
+  
+  .dev-header p { 
+    color: #b7b7c3; 
+  }
+  
+  .dev-card { 
+    background: #141419; 
+    border-color: #3b2d5c; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .dev-name { 
+    color: #efe9ff; 
+  }
+  
+  .dev-role,
+  .dev-bio { 
+    color: #b7b7c3; 
+  }
+  
+  .dev-avatar-wrap { 
+    border-color: #8a5be8; 
+    background: #1c172a; 
+  }
+  
+  .dev-social { 
+    border-color: #3b2d5c; 
+    background: #1a1526; 
+    color: #bfa6ff; 
+  }
+  
+  .dev-social:hover { 
+    background: #8a5be8; 
+    color: #100a1d; 
+  }
+}

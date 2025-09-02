@@ -1,0 +1,170 @@
+/* HeaderRideSearch.css */
+.header-ride-search {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 5px 15px rgba(111, 66, 193, 0.15); /* subtle purple glow */
+  margin: 20px auto;
+  max-width: 600px;
+}
+
+.search-title {
+  text-align: center;
+  color: #4b2e83; /* deep purple */
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+.ride-search-form {
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.ride-select {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 100%;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.ride-select:focus {
+  border-color: #6f42c1; /* purple focus */
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(111, 66, 193, 0.25);
+}
+
+.form-options-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.date-input-container {
+  flex: 1;
+  min-width: 150px;
+}
+
+.date-input {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 100%;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.date-input:focus {
+  border-color: #6f42c1;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(111, 66, 193, 0.25);
+}
+
+.passenger-selector {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #f5f0fa; /* soft lavender */
+  min-width: 80px;
+  justify-content: center;
+  transition: background 0.3s;
+}
+
+.passenger-selector:hover {
+  background: #e6dbf5; /* darker lavender hover */
+}
+
+.user-icon {
+  margin-right: 8px;
+  color: #6f42c1; /* purple icon */
+}
+
+.passenger-count {
+  font-weight: 600;
+  color: #4b2e83;
+}
+
+.search-btn-container {
+  flex: 1;
+  min-width: 120px;
+}
+
+.search-btn {
+  background: #6f42c1;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.search-btn:hover {
+  background: #5a32a3; /* darker purple */
+  box-shadow: 0 4px 10px rgba(111, 66, 193, 0.3);
+}
+
+/* Fare result styling */
+.fare-result {
+  margin-top: 20px;
+  padding: 20px;
+  background: #faf7fd;
+  border-radius: 10px;
+  border: 1px solid #e6dbf5;
+}
+
+.fare-title {
+  color: #4b2e83;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.fare-breakdown li {
+  margin: 5px 0;
+  color: #444;
+}
+
+.fare-total {
+  font-size: 18px;
+  font-weight: 700;
+  color: #6f42c1;
+  margin-top: 10px;
+}
+
+.fare-note {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+/* Responsive design */
+@media (max-width: 576px) {
+  .header-ride-search {
+    padding: 15px;
+    margin: 10px;
+  }
+
+  .form-options-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .date-input-container,
+  .passenger-selector,
+  .search-btn-container {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}

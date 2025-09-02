@@ -1,28 +1,40 @@
 const places = [
-  {
-    id: 1,
-    location: "Select a location",
-  },
-  {
-    id: 2,
-    location: "Peshawar",
-  },
-  {
-    id: 3,
-    location: "Islamabad",
-  },
-  {
-    id: 4,
-    location: "Lahore",
-  },
-  {
-    id: 5,
-    location: "Abbottabad",
-  },
-  {
-    id: 6,
-    location: "Battagram",
-  },
+  { id: 1, location: "Select a location" },
+
+  // Expanded & Alphabetically Sorted Dhaka Areas
+  { id: 2, location: "Agargaon", lat: 23.7771, lng: 90.3782 },
+  { id: 3, location: "Azimpur", lat: 23.7299, lng: 90.3854 },
+  { id: 4, location: "Badda", lat: 23.7802, lng: 90.4264 },
+  { id: 5, location: "Banani", lat: 23.7935, lng: 90.4043 },
+  { id: 6, location: "Baridhara", lat: 23.8081, lng: 90.4225 },
+  { id: 7, location: "Bashundhara", lat: 23.8132, lng: 90.4281 },
+  { id: 8, location: "Chawkbazar", lat: 23.7195, lng: 90.3973 },
+  { id: 9, location: "Demra", lat: 23.7099, lng: 90.4805 },
+  { id: 10, location: "Dhanmondi", lat: 23.7451, lng: 90.373 },
+  { id: 11, location: "Farmgate", lat: 23.7527, lng: 90.3917 },
+  { id: 12, location: "Gabtoli", lat: 23.7796, lng: 90.3442 },
+  { id: 13, location: "Gulshan-1", lat: 23.7806, lng: 90.4166 },
+  { id: 14, location: "Gulshan-2", lat: 23.7925, lng: 90.4145 },
+  { id: 15, location: "Jatrabari", lat: 23.7104, lng: 90.4397 },
+  { id: 16, location: "Kallyanpur", lat: 23.7792, lng: 90.3668 },
+  { id: 17, location: "Karwan Bazar", lat: 23.7516, lng: 90.391 },
+  { id: 18, location: "Khilgaon", lat: 23.7578, lng: 90.4273 },
+  { id: 19, location: "Lalbagh", lat: 23.7174, lng: 90.3882 },
+  { id: 20, location: "Malibagh", lat: 23.7494, lng: 90.4195 },
+  { id: 21, location: "Mirpur-1", lat: 23.8042, lng: 90.3535 },
+  { id: 22, location: "Mirpur-10", lat: 23.8095, lng: 90.3667 },
+  { id: 23, location: "Mirpur-12", lat: 23.8222, lng: 90.3651 },
+  { id: 24, location: "Mohakhali", lat: 23.7808, lng: 90.4009 },
+  { id: 25, location: "Mohammadpur", lat: 23.7639, lng: 90.358 },
+  { id: 26, location: "Motijheel", lat: 23.732, lng: 90.4175 },
+  { id: 27, location: "Nawabpur", lat: 23.7278, lng: 90.4119 },
+  { id: 28, location: "Pallabi", lat: 23.8293, lng: 90.3654 },
+  { id: 29, location: "Rampura", lat: 23.7638, lng: 90.4262 },
+  { id: 30, location: "Sadarghat", lat: 23.707, lng: 90.4115 },
+  { id: 31, location: "Shahbagh", lat: 23.7388, lng: 90.3967 },
+  { id: 32, location: "Shyamoli", lat: 23.7744, lng: 90.3656 },
+  { id: 33, location: "Tejgaon", lat: 23.7666, lng: 90.4 },
+  { id: 34, location: "Uttara", lat: 23.8716, lng: 90.3949 },
 ];
 
 export default places;

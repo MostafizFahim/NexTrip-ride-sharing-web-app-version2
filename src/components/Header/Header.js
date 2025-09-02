@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import HeaderRideSearch from "./HeaderRideSearch";
+//import HeaderRideSearch from "./HeaderRideSearch";
 import AOS from "aos";
 
 const Header = () => {
@@ -12,9 +12,9 @@ const Header = () => {
     <section>
       <div className="header">
         <div className="row mainRow d-flex flex-row flex-wrap justify-content-center align-items-center">
-          <div className="col-12 col-md-6 mainRowCol1">
+          {/* <div className="col-12 col-md-6 mainRowCol1">
             <HeaderRideSearch />
-          </div>
+          </div> */}
           <div
             className="col-12 col-md-6 mainRowCol2"
             data-aos="fade-left"

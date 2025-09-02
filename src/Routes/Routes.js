@@ -27,11 +27,15 @@ import MyRideReqPage from "../Pages/userInterface-pages/MyRideReqPage.js";
 import FilleUploadTest from "../components/test/FilleUploadTest.js";
 import MessagingPage from "../Pages/userInterface-pages/MessagingPage.js";
 import test2 from "../components/test/test2.js";
+import ScrollToTop from "./ScrollToTop";
+import PrivacyPolicy from "../Pages/PrivacyPolicy";
+import MeetTheDevelopers from "../Pages/MeetTheDevelopers";
 
 function Routes() {
   return (
     <>
       <Router>
+        <ScrollToTop />
         <Switch>
           <Route exact path="/" component={App} />
           <Route exact path="/home" component={App} />
@@ -44,6 +48,9 @@ function Routes() {
           <Route path="/about" component={AboutUs} />
           <Route path="/contact" component={ContactUs} />
           <Route path="/howitworks" component={Works} />
+          <Route path="/privacy-policy" component={PrivacyPolicy} />
+          <Route path="/developers" component={MeetTheDevelopers} />
+
           {/* <Route path="/formtest" component={Forms} /> */}
 
           {/* User Interface */}

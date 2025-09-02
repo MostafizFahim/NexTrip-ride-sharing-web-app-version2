@@ -1,24 +1,54 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-.env
-
-# testing
-/coverage
-
-# production
-/build
-
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
+# =========================
+# Node / npm
+# =========================
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# =========================
+# Build / Output
+# =========================
+client/build/
+server/dist/
+dist/
+*.tsbuildinfo
+
+# =========================
+# Env files (NEVER commit secrets)
+# =========================
+.env
+.env.local
+.env.*.local
+server/.env
+client/.env.local
+
+# =========================
+# Logs
+# =========================
+logs
+*.log
+*.log.*
+lerna-debug.log
+
+# =========================
+# OS / Editor junk
+# =========================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# =========================
+# Coverage / Testing
+# =========================
+coverage/
+.nyc_output/
+jest-cache/
+jest-test-results.json

@@ -18,17 +18,17 @@ const FooterCol = [
     link3: "Contact Us",
     link3url: "/contact",
     link4: "Help",
-    link4url: "/",
+    link4url: "/howitworks",
   },
   {
-    link1: "Blogs",
-    link1url: "/",
+    link1: "Developers",
+    link1url: "/developers",
     link2: "Privacy and Policy",
-    link2url: "/",
+    link2url: "/privacy-policy",
     link3: "Publish Ride",
-    link3url: "/publishride",
+    link3url: "/register",
     link4: "Book a Ride",
-    link4url: "/search",
+    link4url: "/login",
   },
 ];
 
@@ -55,7 +55,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="footerCopyright">
-        <h6>Copyright &copy; 2022 by TrustiCar</h6>
+        <h6>Copyright &copy; 2025 by NexTrip</h6>
       </div>
     </section>
   );

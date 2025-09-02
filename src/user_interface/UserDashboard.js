@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { BsArrowRight } from "react-icons/bs";
 import RideRequestCard from "./RideRequestCard";
 import AOS from "aos";
-//import API from "../API";
-import API from "../../API/localStorageAPI";
+import API from "../API";
 
 const UserDashboard = () => {
   const [userPublishride, setUserPublishRide] = useState([]);
