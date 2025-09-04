@@ -6,12 +6,12 @@ import "../../user_interface/userInterface.css";
 
 const UserRideRequestPage = () => {
   return (
-    <section className="user-dashboard">
+    <section className="user-dashboard ride-request-mode">
       <UserInterfaceNavbar />
       <div className="container">
         <div className="row userDashboard-row">
           <Sidebar />
-          <UserRideRequest />
+          <UserRideRequest layout="embedded" />
         </div>
       </div>
     </section>

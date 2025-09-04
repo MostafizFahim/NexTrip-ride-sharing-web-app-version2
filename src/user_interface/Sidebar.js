@@ -52,28 +52,30 @@ const Sidebar = () => {
                 Dashboard
               </Link>
             </li>
-            <li className="nav-item active d-flex align-items-center SidebarMenuItem">
-              <AiOutlineUser className="sidebarMenuIcon" />
-              <Link to="/user-dashboard/profile" className="nav-link">
-                Profile
-              </Link>
-            </li>
-            <li className="nav-item d-flex align-items-center SidebarMenuItem">
-              <IoAddCircleOutline className="sidebarMenuIcon" />
-              <Link to="/user-dashboard/publishride" className="nav-link">
-                Publish Ride
-              </Link>
-            </li>
             <li className="nav-item d-flex align-items-center SidebarMenuItem">
               <IoCarSportOutline className="sidebarMenuIcon" />
               <Link to="/user-dashboard/riderequest" className="nav-link">
                 Request for Ride
               </Link>
             </li>
+
+            <li className="nav-item d-flex align-items-center SidebarMenuItem">
+              <IoAddCircleOutline className="sidebarMenuIcon" />
+              <Link to="/user-dashboard/publishride" className="nav-link">
+                Publish Ride
+              </Link>
+            </li>
+
             <li className="nav-item d-flex align-items-center SidebarMenuItem">
               <VscGitPullRequest className="sidebarMenuIcon" />
               <Link to="/user-dashboard/my-ride-requests" className="nav-link">
                 My Ride Requests
+              </Link>
+            </li>
+            <li className="nav-item active d-flex align-items-center SidebarMenuItem">
+              <AiOutlineUser className="sidebarMenuIcon" />
+              <Link to="/user-dashboard/profile" className="nav-link">
+                Profile
               </Link>
             </li>
             <li className="nav-item d-flex align-items-center SidebarMenuItem">

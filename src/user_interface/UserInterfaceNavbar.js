@@ -5,7 +5,7 @@ const UserInterfaceNavbar = () => {
   return (
     <div className="logo">
       <Link to={"/"} className="navbar-brand">
-        TrustiCar
+        NexTrip
       </Link>
     </div>
   );

@@ -18,7 +18,7 @@ const FooterCol = [
     link3: "Contact Us",
     link3url: "/contact",
     link4: "Help",
-    link4url: "/howitworks",
+    link4url: "/help",
   },
   {
     link1: "Developers",

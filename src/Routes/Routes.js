@@ -30,6 +30,8 @@ import test2 from "../components/test/test2.js";
 import ScrollToTop from "./ScrollToTop";
 import PrivacyPolicy from "../Pages/PrivacyPolicy";
 import MeetTheDevelopers from "../Pages/MeetTheDevelopers";
+import Help from "../Pages/Help";
+import RideRequest from "../components/Request_Ride/RideRequest.js";
 
 function Routes() {
   return (
@@ -50,6 +52,7 @@ function Routes() {
           <Route path="/howitworks" component={Works} />
           <Route path="/privacy-policy" component={PrivacyPolicy} />
           <Route path="/developers" component={MeetTheDevelopers} />
+          <Route path="/help" component={Help} />
 
           {/* <Route path="/formtest" component={Forms} /> */}
 
@@ -65,10 +68,8 @@ function Routes() {
             path="/user-dashboard/publishride"
             component={UserPublishRidePage}
           />
-          <Route
-            path="/user-dashboard/riderequest"
-            component={UserRideRequestPage}
-          />
+          <Route path="/user-dashboard/riderequest" component={RideRequest} />
+
           <Route
             path="/user-dashboard/profile/edit/:id"
             component={UserProfileEditPage}

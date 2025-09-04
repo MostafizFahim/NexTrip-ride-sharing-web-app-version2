@@ -144,7 +144,7 @@ export default function Works({
         </section>
 
         {/* FAQ */}
-        <section className="hiw-section">
+        {/* <section className="hiw-section">
           <div className="hiw-container">
             <div className="hiw-section__head">
               <h2 className="hiw-h2">FAQs</h2>
@@ -185,7 +185,7 @@ export default function Works({
               </details>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Footer CTA */}
         <section className="hiw-cta">
