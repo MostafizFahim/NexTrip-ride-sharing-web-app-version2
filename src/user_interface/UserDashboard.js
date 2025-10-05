@@ -2,53 +2,77 @@ import React, { useEffect, useState } from "react";
 import { BsArrowRight } from "react-icons/bs";
 import RideRequestCard from "./RideRequestCard";
 import AOS from "aos";
-import API from "../API";
+import API from "../API/localStorageAPI"; // <-- use LS API
 
 const UserDashboard = () => {
+  const [authUser, setAuthUser] = useState(null);
   const [userPublishride, setUserPublishRide] = useState([]);
   const [requestedRides, setRequestedRides] = useState([]);
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userEmail = user.email;
+  const [err, setErr] = useState("");
 
   useEffect(() => {
-    API.get("user/user-dashboard", {
-      headers: {
-        token: localStorage.getItem("authToken"),
-      },
-    });
-    const getUserPublishRide = async () => {
-      const { data } = await API.get("publishride");
-      const userPublishRides = data.filter((ride) => {
-        return ride.email === userEmail;
-      });
-      setUserPublishRide(userPublishRides);
-    };
+    const bootstrap = async () => {
+      try {
+        // optional "ping" your old code did
+        await API.get("user/user-dashboard");
 
-    const getRequestRides = async () => {
-      const { data } = await API.get("requestride");
-      setRequestedRides(data);
+        // get current signed-in user from LS
+        const { data: me } = await API.get("user/me");
+        setAuthUser(me);
+
+        // fetch rides from LS and filter by email
+        const { data: allPublished } = await API.get("publishride");
+        const mine = allPublished.filter(
+          (ride) =>
+            (ride?.email || "").toLowerCase() ===
+            (me?.email || "").toLowerCase()
+        );
+        setUserPublishRide(mine);
+
+        const { data: requests } = await API.get("requestride");
+        setRequestedRides(requests);
+      } catch (e) {
+        setErr(e?.response?.data || "Failed to load dashboard");
+      }
     };
-    getUserPublishRide();
-    getRequestRides();
-  }, [userEmail]);
+    bootstrap();
+  }, []);
 
   useEffect(() => {
     AOS.init();
     AOS.refresh();
   }, []);
+
+  if (err) {
+    return (
+      <div className="col-md-9 userProfile-main">
+        <div className="container">
+          <h2 className="text-center mb-4">Your Rides</h2>
+          <div className="alert alert-danger" role="alert">
+            {err}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="col-md-9 userProfile-main">
       <div className="container">
         <h2 className="text-center mb-5">Your Rides</h2>
-        {/* {console.log(userPublishride)} */}
+
         <div className="row mb-5">
+          {userPublishride.length === 0 && (
+            <p className="text-muted">No published rides yet.</p>
+          )}
+
           {userPublishride.map((ride, index) => {
             const { goingfrom, goingto, date } = ride;
             return (
               <div
                 className="card border-success mb-3 me-3 col-5"
                 style={{ maxWidth: "18rem" }}
-                key={index}
+                key={ride.id || index}
                 data-aos="fade-up"
                 data-aos-duration="1200"
               >
@@ -68,34 +92,38 @@ const UserDashboard = () => {
           })}
         </div>
       </div>
-      {requestedRides.map((ride, index) => {
-        const {
-          _id,
-          rideId,
-          goingfrom,
-          goingto,
-          rideStatus,
-          requestStatus,
-          date,
-          passenger,
-          publisherId,
-          bookerEmail,
-        } = ride;
-        return user._id === publisherId ? (
-          <RideRequestCard
-            key={index}
-            id={_id}
-            rideId={rideId}
-            goingfrom={goingfrom}
-            goingto={goingto}
-            rideStatus={rideStatus}
-            requestStatus={requestStatus}
-            date={date}
-            passenger={passenger}
-            bookerEmail={bookerEmail}
-          />
-        ) : null;
-      })}
+
+      {requestedRides
+        .filter((r) => (authUser?.id ?? authUser?._id) === r.publisherId)
+        .map((ride, index) => {
+          const {
+            _id,
+            rideId,
+            goingfrom,
+            goingto,
+            rideStatus,
+            requestStatus,
+            date,
+            passenger,
+            publisherId,
+            bookerEmail,
+          } = ride;
+
+          return (
+            <RideRequestCard
+              key={_id || index}
+              id={_id}
+              rideId={rideId}
+              goingfrom={goingfrom}
+              goingto={goingto}
+              rideStatus={rideStatus}
+              requestStatus={requestStatus}
+              date={date}
+              passenger={passenger}
+              bookerEmail={bookerEmail}
+            />
+          );
+        })}
     </div>
   );
 };
