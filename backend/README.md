@@ -42,8 +42,10 @@ backend/
       users.routes.js
     services/
       fare.service.js
+      matching.service.js
       redis.service.js
     sockets/
+      io-store.js
       index.js
     app.js
     server.js
@@ -266,7 +268,7 @@ join-trip-room
 
 ## Phase 3: Passenger Booking
 
-Phase 3 creates trips with status `REQUESTED`. Driver matching is intentionally left for Phase 4.
+Phase 3 creates trips with status `REQUESTED` and calculates a simple learning fare.
 
 ### Estimate fare
 
@@ -332,4 +334,212 @@ Authorization: Bearer <token>
 ```text
 GET /api/trips/:id
 Authorization: Bearer <token>
+```
+
+## Phase 4: Matching Engine
+
+When a passenger books a trip, the backend now:
+
+1. Looks for nearby online drivers in Redis.
+2. Filters them by approved status and requested vehicle type.
+3. Sends the trip to the nearest driver over Socket.IO.
+4. Gives that driver 30 seconds to accept or decline.
+5. Tries the next nearest driver after decline or timeout.
+6. Cancels the trip with `No drivers available` after 3 failed attempts.
+
+These values are configurable in `.env`:
+
+```text
+MATCH_RADIUS_KM=5
+MATCH_MAX_ATTEMPTS=3
+MATCH_REQUEST_TIMEOUT_MS=30000
+```
+
+### Driver receives request
+
+Driver listens for:
+
+```text
+trip:request
+```
+
+Example payload:
+
+```json
+{
+  "tripId": "trip_id_here",
+  "passenger": {
+    "id": "passenger_id",
+    "name": "Rahim Passenger",
+    "phone": "01700000001",
+    "rating": 5
+  },
+  "pickup": {
+    "lat": 23.7806,
+    "lng": 90.4193,
+    "address": "Gulshan 1"
+  },
+  "dropoff": {
+    "lat": 23.7509,
+    "lng": 90.3936,
+    "address": "Dhanmondi 32"
+  },
+  "vehicleType": "BIKE",
+  "estimatedFare": 70,
+  "distanceKm": 4.16,
+  "pickupDistanceKm": 1.2,
+  "expiresInMs": 30000
+}
+```
+
+### Driver accepts by Socket.IO
+
+```text
+trip:accept
+```
+
+```json
+{
+  "tripId": "trip_id_here"
+}
+```
+
+### Driver declines by Socket.IO
+
+```text
+trip:decline
+```
+
+```json
+{
+  "tripId": "trip_id_here"
+}
+```
+
+### Driver accepts by REST
+
+This is useful for testing before the mobile app exists.
+
+```text
+POST /api/trips/:id/accept
+Authorization: Bearer <driver_token>
+```
+
+### Driver declines by REST
+
+```text
+POST /api/trips/:id/decline
+Authorization: Bearer <driver_token>
+```
+
+### Passenger listens for matching updates
+
+```text
+trip:matching-driver
+trip:accepted
+trip:no-drivers-available
+trip:updated
+```
+
+## Phase 5: Live Trip
+
+After a driver accepts, the trip moves through:
+
+```text
+ACCEPTED -> DRIVER_ARRIVED -> STARTED -> COMPLETED
+```
+
+The hardcoded OTP is still `1234` for learning.
+
+### Driver marks arrived
+
+```text
+POST /api/trips/:id/arrived
+Authorization: Bearer <driver_token>
+```
+
+Passenger listens for:
+
+```text
+trip:driver-arrived
+```
+
+### Driver starts trip with OTP
+
+```text
+POST /api/trips/:id/start
+Authorization: Bearer <driver_token>
+```
+
+```json
+{
+  "otp": "1234"
+}
+```
+
+Both passenger and driver listen for:
+
+```text
+trip:started
+```
+
+### Driver completes trip
+
+If `actualDistanceKm` is not sent, the backend uses the original estimated distance.
+
+```text
+POST /api/trips/:id/complete
+Authorization: Bearer <driver_token>
+```
+
+```json
+{
+  "actualDistanceKm": 4.5
+}
+```
+
+Completing the trip:
+
+- Sets status to `COMPLETED`
+- Calculates `finalFare`
+- Marks `paymentStatus` as `PAID`
+- Adds the fare to driver `totalEarnings`
+
+Both passenger and driver listen for:
+
+```text
+trip:completed
+```
+
+### Live driver location during trip
+
+The driver keeps sending the existing event every 5 seconds:
+
+```text
+driver:update-location
+```
+
+```json
+{
+  "lat": 23.7806,
+  "lng": 90.4193
+}
+```
+
+When the driver has an active trip, the passenger also receives:
+
+```text
+trip:driver-location
+```
+
+```json
+{
+  "tripId": "trip_id_here",
+  "driverId": "driver_id_here",
+  "userId": "driver_user_id_here",
+  "lat": 23.7806,
+  "lng": 90.4193,
+  "status": "STARTED",
+  "updatedAt": "2026-06-03T00:00:00.000Z"
+}
 ```

@@ -1,6 +1,12 @@
 const { z } = require("zod");
 const prisma = require("../lib/prisma");
-const { calculateRideEstimate } = require("../services/fare.service");
+const { calculateFare, calculateRideEstimate } = require("../services/fare.service");
+const {
+  startMatchingForTrip,
+  acceptTripRequest,
+  declineTripRequest,
+} = require("../services/matching.service");
+const { getIo } = require("../sockets/io-store");
 
 const coordinate = z.number().finite();
 
@@ -16,6 +22,14 @@ const bookTripSchema = estimateSchema.extend({
   pickupAddress: z.string().min(2, "Pickup address is required"),
   dropoffAddress: z.string().min(2, "Dropoff address is required"),
   paymentMethod: z.enum(["CASH", "WALLET"]).default("CASH"),
+});
+
+const startTripSchema = z.object({
+  otp: z.string().min(4, "OTP is required"),
+});
+
+const completeTripSchema = z.object({
+  actualDistanceKm: z.number().positive().optional(),
 });
 
 function tripIncludes() {
@@ -41,6 +55,49 @@ function tripIncludes() {
       },
     },
   };
+}
+
+function emitTripUpdate(trip, event, message) {
+  const payload = { message, trip };
+  const io = getIo();
+
+  io.to(`trip_${trip.id}`).emit(event, payload);
+  io.to(`trip_${trip.id}`).emit("trip:updated", payload);
+  io.to(`user_${trip.passengerId}`).emit(event, payload);
+
+  if (trip.driver?.userId) {
+    io.to(`user_${trip.driver.userId}`).emit(event, payload);
+  }
+}
+
+async function getDriverByUserId(userId) {
+  return prisma.driver.findUnique({
+    where: { userId },
+    include: { user: true },
+  });
+}
+
+async function getTripForDriver(tripId, driverUserId) {
+  const driver = await getDriverByUserId(driverUserId);
+
+  if (!driver) {
+    return { error: { status: 404, message: "Driver profile not found" } };
+  }
+
+  const trip = await prisma.trip.findUnique({
+    where: { id: tripId },
+    include: tripIncludes(),
+  });
+
+  if (!trip) {
+    return { error: { status: 404, message: "Trip not found" } };
+  }
+
+  if (trip.driverId !== driver.id) {
+    return { error: { status: 403, message: "This trip is not assigned to you" } };
+  }
+
+  return { driver, trip };
 }
 
 async function estimateTrip(req, res, next) {
@@ -77,8 +134,12 @@ async function bookTrip(req, res, next) {
       include: tripIncludes(),
     });
 
+    startMatchingForTrip(trip.id).catch((error) => {
+      console.error("Matching failed:", error.message);
+    });
+
     return res.status(201).json({
-      message: "Trip requested. Matching will be added in Phase 4.",
+      message: "Trip requested. Matching started.",
       trip,
     });
   } catch (error) {
@@ -151,9 +212,169 @@ async function getTrip(req, res, next) {
   }
 }
 
+async function acceptTrip(req, res, next) {
+  try {
+    const result = await acceptTripRequest({
+      tripId: req.params.id,
+      driverUserId: req.user.id,
+    });
+
+    if (!result.ok) {
+      return res.status(result.status).json({ message: result.message });
+    }
+
+    return res.json({
+      message: "Trip accepted",
+      trip: result.trip,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function declineTrip(req, res, next) {
+  try {
+    const result = await declineTripRequest({
+      tripId: req.params.id,
+      driverUserId: req.user.id,
+    });
+
+    if (!result.ok) {
+      return res.status(result.status).json({ message: result.message });
+    }
+
+    return res.json({ message: result.message });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function markDriverArrived(req, res, next) {
+  try {
+    const { trip, error } = await getTripForDriver(req.params.id, req.user.id);
+    if (error) return res.status(error.status).json({ message: error.message });
+
+    if (trip.status !== "ACCEPTED") {
+      return res.status(409).json({
+        message: "Driver can mark arrived only after accepting the trip",
+      });
+    }
+
+    const updatedTrip = await prisma.trip.update({
+      where: { id: trip.id },
+      data: { status: "DRIVER_ARRIVED" },
+      include: tripIncludes(),
+    });
+
+    emitTripUpdate(updatedTrip, "trip:driver-arrived", "Driver arrived");
+
+    return res.json({
+      message: "Driver arrived",
+      trip: updatedTrip,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function startTrip(req, res, next) {
+  try {
+    const input = startTripSchema.parse(req.body);
+    const { trip, error } = await getTripForDriver(req.params.id, req.user.id);
+    if (error) return res.status(error.status).json({ message: error.message });
+
+    if (trip.status !== "DRIVER_ARRIVED") {
+      return res.status(409).json({
+        message: "Trip can start only after driver arrives",
+      });
+    }
+
+    if (input.otp !== trip.otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    const updatedTrip = await prisma.trip.update({
+      where: { id: trip.id },
+      data: {
+        status: "STARTED",
+        startedAt: new Date(),
+      },
+      include: tripIncludes(),
+    });
+
+    emitTripUpdate(updatedTrip, "trip:started", "Trip started");
+
+    return res.json({
+      message: "Trip started",
+      trip: updatedTrip,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function completeTrip(req, res, next) {
+  try {
+    const input = completeTripSchema.parse(req.body);
+    const { driver, trip, error } = await getTripForDriver(
+      req.params.id,
+      req.user.id
+    );
+    if (error) return res.status(error.status).json({ message: error.message });
+
+    if (trip.status !== "STARTED") {
+      return res.status(409).json({
+        message: "Only started trips can be completed",
+      });
+    }
+
+    const finalDistanceKm = input.actualDistanceKm || trip.distanceKm;
+    const finalFare = calculateFare(finalDistanceKm, trip.vehicleType);
+
+    const updatedTrip = await prisma.$transaction(async (tx) => {
+      const completedTrip = await tx.trip.update({
+        where: { id: trip.id },
+        data: {
+          status: "COMPLETED",
+          distanceKm: finalDistanceKm,
+          finalFare,
+          paymentStatus: "PAID",
+          completedAt: new Date(),
+        },
+        include: tripIncludes(),
+      });
+
+      await tx.driver.update({
+        where: { id: driver.id },
+        data: {
+          totalEarnings: {
+            increment: finalFare,
+          },
+        },
+      });
+
+      return completedTrip;
+    });
+
+    emitTripUpdate(updatedTrip, "trip:completed", "Trip completed");
+
+    return res.json({
+      message: "Trip completed and payment marked as paid",
+      trip: updatedTrip,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   estimateTrip,
   bookTrip,
   listMyTrips,
   getTrip,
+  acceptTrip,
+  declineTrip,
+  markDriverArrived,
+  startTrip,
+  completeTrip,
 };

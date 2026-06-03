@@ -2,6 +2,11 @@ const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
 const prisma = require("../lib/prisma");
 const { addDriverLocation } = require("../services/redis.service");
+const {
+  acceptTripRequest,
+  declineTripRequest,
+} = require("../services/matching.service");
+const { setIo } = require("./io-store");
 
 function configureSockets(server) {
   const allowedOrigins = [
@@ -15,6 +20,7 @@ function configureSockets(server) {
       credentials: true,
     },
   });
+  setIo(io);
 
   // Socket auth: client connects with io(SOCKET_URL, { auth: { token } })
   io.use(async (socket, next) => {
@@ -63,6 +69,37 @@ function configureSockets(server) {
         // Redis keeps only live driver location. PostgreSQL keeps last known location.
         await addDriverLocation(driver, lat, lng);
 
+        const activeTrip = await prisma.trip.findFirst({
+          where: {
+            driverId: driver.id,
+            status: { in: ["ACCEPTED", "DRIVER_ARRIVED", "STARTED"] },
+          },
+          select: {
+            id: true,
+            passengerId: true,
+            status: true,
+          },
+          orderBy: { acceptedAt: "desc" },
+        });
+
+        if (activeTrip) {
+          const payload = {
+            tripId: activeTrip.id,
+            driverId: driver.id,
+            userId: driver.userId,
+            lat,
+            lng,
+            status: activeTrip.status,
+            updatedAt: new Date().toISOString(),
+          };
+
+          io.to(`trip_${activeTrip.id}`).emit("trip:driver-location", payload);
+          io.to(`user_${activeTrip.passengerId}`).emit(
+            "trip:driver-location",
+            payload
+          );
+        }
+
         io.emit("driver:update-location", {
           driverId: driver.id,
           userId: driver.userId,
@@ -71,6 +108,40 @@ function configureSockets(server) {
         });
       } catch (error) {
         socket.emit("socket:error", { message: "Could not update location" });
+      }
+    });
+
+    socket.on("trip:accept", async ({ tripId }) => {
+      try {
+        if (socket.user.role !== "DRIVER") return;
+
+        const result = await acceptTripRequest({
+          tripId,
+          driverUserId: socket.user.id,
+        });
+
+        if (!result.ok) {
+          socket.emit("socket:error", { message: result.message });
+        }
+      } catch (error) {
+        socket.emit("socket:error", { message: "Could not accept trip" });
+      }
+    });
+
+    socket.on("trip:decline", async ({ tripId }) => {
+      try {
+        if (socket.user.role !== "DRIVER") return;
+
+        const result = await declineTripRequest({
+          tripId,
+          driverUserId: socket.user.id,
+        });
+
+        if (!result.ok) {
+          socket.emit("socket:error", { message: result.message });
+        }
+      } catch (error) {
+        socket.emit("socket:error", { message: "Could not decline trip" });
       }
     });
   });
