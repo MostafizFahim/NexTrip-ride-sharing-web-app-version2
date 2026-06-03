@@ -1,0 +1,631 @@
+/* ActiveRideFullPage.css - Full Page Version */
+
+:root {
+  --bg: #f6f7fb;
+  --panel: #ffffff;
+  --card: #ffffff;
+  --primary-700: #5b21b6;
+  --primary-600: #6d28d9;
+  --primary-500: #7c3aed;
+  --primary-400: #8b5cf6;
+  --primary-300: #a78bfa;
+  --text-900: #0f172a;
+  --text-700: #334155;
+  --text-600: #475569;
+  --muted-500: #64748b;
+  --border: #e2e8f0;
+  --muted-bg: #f1f5f9;
+  --shadow-sm: 0 4px 12px rgba(2, 6, 23, 0.06);
+  --shadow-md: 0 8px 24px rgba(2, 6, 23, 0.10);
+  --shadow-lg: 0 12px 32px rgba(2, 6, 23, 0.14);
+  --radius-lg: 16px;
+  --radius-md: 12px;
+}
+
+/* Full Page Container */
+.active-ride-fullpage {
+  width: 100vw;
+  height: 100vh;
+  background: 
+    radial-gradient(1200px 800px at -10% -10%, rgba(124, 58, 237, 0.07), transparent 60%),
+    radial-gradient(1000px 700px at 110% 10%, rgba(167, 139, 250, 0.08), transparent 60%),
+    var(--bg);
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.active-ride-fullpage.active-ride-embedded {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 100%;
+  min-height: 680px;
+  max-height: calc(100vh - 148px);
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.active-ride-embedded .active-ride-header {
+  padding: 16px 20px;
+  box-shadow: none;
+}
+
+.active-ride-embedded .active-ride-content {
+  height: calc(100% - 82px);
+  max-width: none;
+}
+
+.active-ride-embedded .ride-info-panel {
+  flex: 0 0 380px;
+  padding: 20px;
+  box-shadow: none;
+  border-left: 0;
+  border-top: 0;
+  border-bottom: 0;
+}
+
+.active-ride-embedded .ride-map-panel {
+  box-shadow: none;
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.active-ride-embedded .status-card,
+.active-ride-embedded .driver-info,
+.active-ride-embedded .ride-details {
+  margin-bottom: 16px;
+  padding: 18px;
+}
+
+.active-ride-embedded .progress-steps {
+  margin-bottom: 16px;
+}
+
+/* Header */
+.active-ride-header {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 40px;
+  box-shadow: var(--shadow-sm);
+  z-index: 1000;
+  position: relative;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.back-button {
+  background: transparent;
+  border: none;
+  color: var(--primary-600);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 12px 24px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background: rgba(124, 58, 237, 0.08);
+  transform: translateX(-2px);
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--text-900);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.ride-id {
+  color: var(--muted-500);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Main Content */
+.active-ride-content {
+  display: flex;
+  height: calc(100vh - 100px);
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+}
+
+/* Left Panel - Ride Info */
+.ride-info-panel {
+  flex: 0 0 480px;
+  background: var(--panel);
+  padding: 32px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(124, 58, 237, 0.08);
+  height: 100%;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+}
+
+/* Status Card */
+.status-card {
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-400));
+  color: white;
+  padding: 28px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 28px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.25);
+}
+
+.status-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 10px 24px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.status-title {
+  font-size: 24px;
+  font-weight: 900;
+  margin: 0 0 12px 0;
+}
+
+.status-subtitle {
+  font-size: 16px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* Driver Info */
+.driver-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 28px;
+  background: var(--muted-bg);
+  border-radius: var(--radius-lg);
+  margin-bottom: 28px;
+}
+
+.driver-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-400));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: white;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.driver-details {
+  flex: 1;
+}
+
+.driver-name {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-900);
+  margin: 0 0 8px 0;
+}
+
+.driver-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: var(--muted-500);
+  margin-bottom: 6px;
+}
+
+.vehicle-info {
+  font-size: 16px;
+  color: var(--text-700);
+  margin: 0;
+  font-weight: 500;
+}
+
+.contact-buttons {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.contact-btn {
+  background: var(--primary-500);
+  border: none;
+  color: white;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 22px;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+}
+
+.contact-btn:hover {
+  background: var(--primary-600);
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+}
+
+/* Ride Details */
+.ride-details {
+  background: var(--muted-bg);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 28px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  color: var(--text-600);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.detail-value {
+  color: var(--text-900);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.fare-amount {
+  font-size: 24px !important;
+  color: var(--primary-600) !important;
+  font-weight: 900 !important;
+}
+
+/* Progress Steps */
+.progress-steps {
+  margin-bottom: 28px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  margin-bottom: 12px;
+  border-radius: var(--radius-lg);
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.step.active {
+  background: rgba(124, 58, 237, 0.08);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  transform: translateX(4px);
+}
+
+.step.completed {
+  opacity: 0.8;
+}
+
+.step-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.step.active .step-icon {
+  background: var(--primary-500);
+  color: white;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.step.completed .step-icon {
+  background: var(--primary-300);
+  color: white;
+}
+
+.step.pending .step-icon {
+  background: var(--muted-bg);
+  color: var(--muted-500);
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-900);
+  margin: 0 0 6px 0;
+}
+
+.step-description {
+  font-size: 14px;
+  color: var(--muted-500);
+  margin: 0;
+}
+
+.step-time {
+  font-size: 14px;
+  color: var(--muted-500);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 18px;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-400));
+  color: white;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.25);
+}
+
+.primary-btn:hover {
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-500));
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(124, 58, 237, 0.35);
+}
+
+.primary-btn:active {
+  transform: translateY(0);
+}
+
+.secondary-btn {
+  background: var(--muted-bg);
+  color: var(--text-700);
+  border: 1px solid var(--border);
+}
+
+.secondary-btn:hover {
+  background: var(--border);
+  transform: translateY(-1px);
+}
+
+/* Right Panel - Map */
+.ride-map-panel {
+  flex: 1;
+  background: var(--panel);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(124, 58, 237, 0.08);
+  position: relative;
+}
+
+.ride-map {
+  width: 100%;
+  height: 100%;
+}
+
+/* ETA Display */
+.eta-display {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(124, 58, 237, 0.1);
+  z-index: 1000;
+}
+
+.eta-title {
+  font-size: 12px;
+  color: var(--muted-500);
+  font-weight: 600;
+  margin: 0 0 6px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.eta-value {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--primary-600);
+  margin: 0;
+}
+
+/* Emergency Button */
+.emergency-button {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 16px 24px;
+  border-radius: var(--radius-lg);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow-lg);
+  transition: all 0.2s ease;
+  z-index: 1000;
+}
+
+.emergency-button:hover {
+  background: #b91c1c;
+  transform: scale(1.05);
+  box-shadow: 0 12px 32px rgba(220, 38, 38, 0.3);
+}
+
+/* Scrollbar Styling */
+.ride-info-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ride-info-panel::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.ride-info-panel::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.ride-info-panel::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+  .active-ride-content {
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .ride-info-panel {
+    flex: 0 0 420px;
+    padding: 24px;
+  }
+}
+
+@media (max-width: 992px) {
+  .active-ride-fullpage.active-ride-embedded {
+    max-height: none;
+    height: auto;
+  }
+
+  .active-ride-content {
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 100px);
+  }
+  
+  .ride-info-panel {
+    flex: none;
+    order: 2;
+    max-height: 500px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+  }
+  
+  .ride-map-panel {
+    flex: none;
+    height: 500px;
+    order: 1;
+  }
+  
+  .active-ride-header {
+    padding: 20px 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .active-ride-fullpage {
+    height: 100%;
+    position: relative;
+  }
+  
+  .active-ride-content {
+    height: auto;
+  }
+  
+  .ride-info-panel {
+    padding: 20px;
+  }
+  
+  .driver-info {
+    padding: 20px;
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .contact-buttons {
+    margin-top: 16px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  .active-ride-fullpage {
+    background: 
+      radial-gradient(1200px 800px at -10% -20%, rgba(124, 58, 237, 0.10), transparent 55%),
+      radial-gradient(1000px 700px at 120% 0%, rgba(167, 139, 250, 0.12), transparent 60%),
+      #0b1020;
+  }
+  
+  .eta-display {
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+  }
+  
+  .ride-info-panel::-webkit-scrollbar-track {
+    background: #1a2035;
+  }
+
+  .ride-info-panel::-webkit-scrollbar-thumb {
+    background: #2d3746;
+  }
+
+  .ride-info-panel::-webkit-scrollbar-thumb:hover {
+    background: #3a4556;
+  }
+}

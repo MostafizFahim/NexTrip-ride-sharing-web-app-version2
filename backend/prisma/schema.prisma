@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  PASSENGER
+  DRIVER
+  ADMIN
+}
+
+enum VehicleType {
+  BIKE
+  CAR
+}
+
+enum DriverStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+}
+
+enum TripStatus {
+  REQUESTED
+  ACCEPTED
+  DRIVER_ARRIVED
+  STARTED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  WALLET
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String   @unique
+  password  String
+  role      UserRole @default(PASSENGER)
+  rating    Float    @default(5.0)
+  createdAt DateTime @default(now())
+
+  driverProfile   Driver?
+  passengerTrips  Trip[]   @relation("PassengerTrips")
+  ratingsGiven    Rating[] @relation("RatingsGiven")
+  ratingsReceived Rating[] @relation("RatingsReceived")
+}
+
+model Driver {
+  id            String       @id @default(uuid())
+  userId        String       @unique
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicleType   VehicleType  @default(BIKE)
+  plateNumber   String
+  status        DriverStatus @default(PENDING)
+  isOnline      Boolean      @default(false)
+  currentLat    Float?
+  currentLng    Float?
+  totalEarnings Float        @default(0)
+  createdAt     DateTime     @default(now())
+
+  trips Trip[] @relation("DriverTrips")
+}
+
+model Trip {
+  id              String        @id @default(uuid())
+  passengerId     String
+  passenger       User          @relation("PassengerTrips", fields: [passengerId], references: [id])
+  driverId        String?
+  driver          Driver?       @relation("DriverTrips", fields: [driverId], references: [id])
+  pickupLat       Float
+  pickupLng       Float
+  pickupAddress   String
+  dropoffLat      Float
+  dropoffLng      Float
+  dropoffAddress  String
+  status          TripStatus    @default(REQUESTED)
+  vehicleType     VehicleType   @default(CAR)
+  estimatedFare   Float
+  finalFare       Float?
+  distanceKm      Float
+  otp             String        @default("1234")
+  surgeMultiplier Float         @default(1.0)
+  paymentMethod   PaymentMethod @default(CASH)
+  paymentStatus   PaymentStatus @default(PENDING)
+  createdAt       DateTime      @default(now())
+  acceptedAt      DateTime?
+  startedAt       DateTime?
+  completedAt     DateTime?
+
+  ratings Rating[]
+}
+
+model Rating {
+  id        String   @id @default(uuid())
+  tripId    String
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  raterId   String
+  rater     User     @relation("RatingsGiven", fields: [raterId], references: [id])
+  rateeId   String
+  ratee     User     @relation("RatingsReceived", fields: [rateeId], references: [id])
+  score     Int
+  comment   String?
+  createdAt DateTime @default(now())
+}
