@@ -14,13 +14,23 @@ The backend is local-first and intentionally simple for learning. The current we
 
 ## Local Development
 
-Full local setup, Redis on Windows, demo accounts, and manual test flow:
+Full local setup, low-space options, demo accounts, and manual test flow:
 
 [docs/LOCAL_SETUP.md](docs/LOCAL_SETUP.md)
 
 Postman collection:
 
 [docs/NexTrip.postman_collection.json](docs/NexTrip.postman_collection.json)
+
+Low-space local setup:
+
+Use a free hosted PostgreSQL database for `DATABASE_URL`, then set `REDIS_MODE=memory` in `backend/.env`. This avoids installing PostgreSQL, Redis, or Docker on your C drive while you are learning.
+
+Docker local services are also available if you want them later:
+
+```bash
+docker compose up -d
+```
 
 Backend:
 
