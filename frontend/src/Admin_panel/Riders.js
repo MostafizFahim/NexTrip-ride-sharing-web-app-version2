@@ -1,95 +1,141 @@
 import React, { useEffect, useState } from "react";
-import UserCard from "./UserCard";
 import { toast } from "react-toastify";
 import API from "../API";
+import backendAPI from "../API/backendAPI";
+
+function normalizeBackendPassenger(passenger) {
+  return {
+    id: passenger.id,
+    fullName: passenger.name,
+    contact: passenger.phone,
+    userType: "Passenger",
+    rating: passenger.rating,
+    createdAt: passenger.createdAt,
+  };
+}
+
+function normalizeLocalUser(user) {
+  return {
+    id: user.id || user._id,
+    fullName: user.fullName,
+    contact: user.email,
+    userType: user.userType,
+    rating: 5,
+    createdAt: user.createdAt || user.date,
+  };
+}
 
 const Riders = () => {
   const [riders, setRiders] = useState([]);
   const [search, setSearch] = useState("");
-  const [searhUser, setSearhUser] = useState([]);
+  const [searchedUsers, setSearchedUsers] = useState([]);
+  const [dataMode, setDataMode] = useState("backend");
 
   useEffect(() => {
-    const getDrivers = async () => {
+    const getRiders = async () => {
       try {
-        const { data } = await API.get("user/register");
-        setRiders(data);
+        const { data } = await backendAPI.get("/admin/passengers");
+        setRiders((data.passengers || []).map(normalizeBackendPassenger));
+        setDataMode("backend");
       } catch (err) {
-        console.log(err);
+        const { data } = await API.get("user/register");
+        setRiders(data.map(normalizeLocalUser));
+        setDataMode("local");
       }
     };
-    getDrivers();
+
+    getRiders();
   }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
 
-    const filterUser = riders.filter((user) => user.fullName === search);
+    const keyword = search.trim().toLowerCase();
+    const filterUser = riders.filter(
+      (user) =>
+        user.fullName.toLowerCase().includes(keyword) ||
+        user.contact.toLowerCase().includes(keyword)
+    );
+
     if (filterUser.length === 0) {
       toast.error("No user found");
-    } else {
-      setSearhUser(filterUser);
     }
+
+    setSearchedUsers(filterUser);
   };
+
+  const visibleRiders = searchedUsers.length > 0 ? searchedUsers : riders;
+
   return (
     <div className="col-md-9 userProfile-main">
-      <div className="">
-        <h2 className="mb-4">Riders</h2>
-        <form onSubmit={(e) => handleSearch(e)}>
+      <div>
+        <div className="admin-title-row">
+          <h2 className="mb-4">Riders</h2>
+          <span className="admin-data-mode">
+            {dataMode === "backend" ? "Backend Connected" : "Local Preview"}
+          </span>
+        </div>
+
+        <form onSubmit={handleSearch}>
           <div className="form-group mb-3">
             <input
               type="text"
               className="form-control"
               id="Search"
-              placeholder="Search for Rider / User..."
+              placeholder="Search for rider by name or phone..."
               onChange={(e) => setSearch(e.target.value)}
               value={search}
             />
           </div>
-          <div className=" my-2">
+          <div className="my-2">
             <button type="submit" className="btn btn-primary">
               Search
             </button>
+            {searchedUsers.length > 0 && (
+              <button
+                type="button"
+                className="btn btn-outline-secondary ms-2"
+                onClick={() => {
+                  setSearch("");
+                  setSearchedUsers([]);
+                }}
+              >
+                Clear
+              </button>
+            )}
           </div>
         </form>
+
         <div className="row">
-          <div className="col-md-7">
-            {searhUser.map((user, index) => {
-              const { fullName, email, userType, date } = user;
-              return (
-                <UserCard
-                  key={index}
-                  fullName={fullName}
-                  email={email}
-                  userType={userType}
-                  date={date}
-                />
-              );
-            })}
-          </div>
-          <div className="col-md-5 mx-auto">
-            {riders.map((driver, index) => {
-              const { fullName, email } = driver;
-              return (
-                <div className="card mb-4" key={index}>
-                  <div className="row g-0">
-                    <div className="col-md-4">
-                      <img
-                        src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png"
-                        className="img-fluid rounded-start"
-                        alt="user"
-                      />
-                    </div>
-                    <div className="col-md-8">
-                      <div className="card-body">
-                        <h5 className="card-title">{fullName}</h5>
-                        <p className="card-text">{email}</p>
-                      </div>
+          {visibleRiders.map((rider) => (
+            <div className="col-md-6" key={rider.id}>
+              <div className="card mb-4">
+                <div className="row g-0">
+                  <div className="col-md-4">
+                    <img
+                      src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png"
+                      className="img-fluid rounded-start"
+                      alt="user"
+                    />
+                  </div>
+                  <div className="col-md-8">
+                    <div className="card-body">
+                      <h5 className="card-title">{rider.fullName}</h5>
+                      <p className="card-text">{rider.contact}</p>
+                      <p className="card-text">{rider.userType}</p>
+                      <p className="card-text">Rating: {rider.rating}</p>
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            </div>
+          ))}
+
+          {visibleRiders.length === 0 && (
+            <div className="col-12">
+              <div className="admin-empty-state">No riders found.</div>
+            </div>
+          )}
         </div>
       </div>
     </div>

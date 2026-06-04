@@ -70,7 +70,22 @@ npm install
 npm run prisma:migrate
 ```
 
-6. Start the API:
+6. Optional demo accounts and trips:
+
+```bash
+npm run prisma:seed
+```
+
+Seed logins:
+
+```text
+Admin: 01700000000 / 123456
+Passenger: 01700000001 / 123456
+Approved driver: 01700000002 / 123456
+Pending driver: 01700000003 / 123456
+```
+
+7. Start the API:
 
 ```bash
 npm run dev
@@ -543,3 +558,53 @@ trip:driver-location
   "updatedAt": "2026-06-03T00:00:00.000Z"
 }
 ```
+
+## Phase 6: Admin Panel APIs
+
+The React web app in `/frontend` is the admin panel. These endpoints feed its dashboard, drivers, riders, trips, and live map views.
+
+### Dashboard summary
+
+```text
+GET /api/admin/dashboard
+Authorization: Bearer <admin_token>
+```
+
+Returns counts for passengers, drivers, pending approvals, online drivers, trip statuses, simulated paid trips, and total revenue.
+
+### Passenger list
+
+```text
+GET /api/admin/passengers
+Authorization: Bearer <admin_token>
+```
+
+### Trip list
+
+```text
+GET /api/admin/trips
+GET /api/admin/trips?status=COMPLETED
+Authorization: Bearer <admin_token>
+```
+
+Each trip includes passenger and driver details for the admin table.
+
+### Driver workflow
+
+```text
+GET /api/admin/drivers
+GET /api/admin/drivers?status=PENDING
+PUT /api/admin/drivers/:id/approve
+PUT /api/admin/drivers/:id/reject
+PUT /api/admin/drivers/:id/suspend
+Authorization: Bearer <admin_token>
+```
+
+### Live driver map
+
+```text
+GET /api/admin/live-drivers
+Authorization: Bearer <admin_token>
+```
+
+The frontend uses Leaflet/OpenStreetMap, so no paid map API key is required.

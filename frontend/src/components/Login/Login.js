@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import AOS from "aos";
 // Use the LocalStorage mock API
 import API from "../../API/localStorageAPI";
+import backendAPI from "../../API/backendAPI";
 
 const Login = () => {
   const history = useHistory();
@@ -31,8 +32,24 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const { data } = await API.post("user/login", { email, password });
-      // data: { token, user }
+      let data;
+
+      try {
+        const backendResponse = await backendAPI.post("/auth/login", {
+          phone: email,
+          password,
+        });
+        data = backendResponse.data;
+        data.user = {
+          ...data.user,
+          fullName: data.user?.fullName || data.user?.name || "User",
+          role: String(data.user?.role || "").toLowerCase(),
+        };
+        backendAPI.saveAuth(data);
+      } catch (backendError) {
+        const localResponse = await API.post("user/login", { email, password });
+        data = localResponse.data;
+      }
 
       // Keep your legacy keys (if other parts of your app read these)
       localStorage.setItem("authToken", data.token);
@@ -82,7 +99,7 @@ const Login = () => {
                 <input
                   type="email"
                   className="form-control"
-                  placeholder="Enter your Email..."
+                  placeholder="Enter your Email or Phone..."
                   name="email"
                   value={formData.email}
                   onChange={(e) =>
