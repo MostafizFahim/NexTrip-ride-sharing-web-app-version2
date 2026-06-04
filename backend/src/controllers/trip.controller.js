@@ -32,6 +32,11 @@ const completeTripSchema = z.object({
   actualDistanceKm: z.number().positive().optional(),
 });
 
+const ratingSchema = z.object({
+  score: z.number().int().min(1).max(5),
+  comment: z.string().max(300).optional(),
+});
+
 function tripIncludes() {
   return {
     passenger: {
@@ -59,7 +64,13 @@ function tripIncludes() {
 
 function emitTripUpdate(trip, event, message) {
   const payload = { message, trip };
-  const io = getIo();
+  let io;
+
+  try {
+    io = getIo();
+  } catch {
+    return;
+  }
 
   io.to(`trip_${trip.id}`).emit(event, payload);
   io.to(`trip_${trip.id}`).emit("trip:updated", payload);
@@ -367,6 +378,131 @@ async function completeTrip(req, res, next) {
   }
 }
 
+async function cancelTrip(req, res, next) {
+  try {
+    const trip = await prisma.trip.findUnique({
+      where: { id: req.params.id },
+      include: tripIncludes(),
+    });
+
+    if (!trip) {
+      return res.status(404).json({ message: "Trip not found" });
+    }
+
+    const cancellableStatuses = ["REQUESTED", "ACCEPTED", "DRIVER_ARRIVED"];
+    if (!cancellableStatuses.includes(trip.status)) {
+      return res.status(409).json({
+        message: "Only requested, accepted, or arrived trips can be cancelled",
+      });
+    }
+
+    let canCancel = false;
+
+    if (req.user.role === "PASSENGER" && trip.passengerId === req.user.id) {
+      canCancel = true;
+    }
+
+    if (req.user.role === "DRIVER") {
+      const driver = await getDriverByUserId(req.user.id);
+      canCancel = Boolean(driver && trip.driverId === driver.id);
+    }
+
+    if (!canCancel) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    const updatedTrip = await prisma.trip.update({
+      where: { id: trip.id },
+      data: { status: "CANCELLED" },
+      include: tripIncludes(),
+    });
+
+    emitTripUpdate(updatedTrip, "trip:cancelled", "Trip cancelled");
+
+    return res.json({
+      message: "Trip cancelled",
+      trip: updatedTrip,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function rateTrip(req, res, next) {
+  try {
+    const input = ratingSchema.parse(req.body);
+    const trip = await prisma.trip.findUnique({
+      where: { id: req.params.id },
+      include: tripIncludes(),
+    });
+
+    if (!trip) {
+      return res.status(404).json({ message: "Trip not found" });
+    }
+
+    if (trip.status !== "COMPLETED") {
+      return res.status(409).json({ message: "Only completed trips can be rated" });
+    }
+
+    let rateeId = null;
+
+    if (req.user.role === "PASSENGER" && trip.passengerId === req.user.id) {
+      rateeId = trip.driver?.userId;
+    }
+
+    if (req.user.role === "DRIVER") {
+      const driver = await getDriverByUserId(req.user.id);
+      if (driver && trip.driverId === driver.id) {
+        rateeId = trip.passengerId;
+      }
+    }
+
+    if (!rateeId) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    const existingRating = await prisma.rating.findFirst({
+      where: {
+        tripId: trip.id,
+        raterId: req.user.id,
+      },
+    });
+
+    if (existingRating) {
+      return res.status(409).json({ message: "You already rated this trip" });
+    }
+
+    const rating = await prisma.rating.create({
+      data: {
+        tripId: trip.id,
+        raterId: req.user.id,
+        rateeId,
+        score: input.score,
+        comment: input.comment,
+      },
+    });
+
+    const average = await prisma.rating.aggregate({
+      where: { rateeId },
+      _avg: { score: true },
+    });
+
+    await prisma.user.update({
+      where: { id: rateeId },
+      data: {
+        rating: Number((average._avg.score || 5).toFixed(2)),
+      },
+    });
+
+    return res.status(201).json({
+      message: "Rating submitted",
+      rating,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   estimateTrip,
   bookTrip,
@@ -377,4 +513,6 @@ module.exports = {
   markDriverArrived,
   startTrip,
   completeTrip,
+  cancelTrip,
+  rateTrip,
 };

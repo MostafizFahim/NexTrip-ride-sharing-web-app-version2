@@ -608,3 +608,45 @@ Authorization: Bearer <admin_token>
 ```
 
 The frontend uses Leaflet/OpenStreetMap, so no paid map API key is required.
+
+## Hardening: Profiles, Cancel, Ratings
+
+### User profile
+
+```text
+GET /api/users/me
+PATCH /api/users/me
+Authorization: Bearer <token>
+```
+
+```json
+{
+  "name": "Updated Name",
+  "password": "123456"
+}
+```
+
+### Cancel trip
+
+Passenger or assigned driver can cancel before the trip starts.
+
+```text
+POST /api/trips/:id/cancel
+Authorization: Bearer <passenger_or_driver_token>
+```
+
+### Rate completed trip
+
+Passenger rates driver. Driver rates passenger.
+
+```text
+POST /api/trips/:id/rate
+Authorization: Bearer <passenger_or_driver_token>
+```
+
+```json
+{
+  "score": 5,
+  "comment": "Good trip"
+}
+```

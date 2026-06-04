@@ -16,6 +16,9 @@ Expo React Native app for the passenger and driver roles in one codebase.
 - Driver arrived/start/complete trip flow
 - Driver live location sent every 5 seconds while online
 - Shared trip history screen
+- Profile update screen
+- Trip cancellation before start
+- 1-5 rating for completed trips
 
 ## Local setup
 

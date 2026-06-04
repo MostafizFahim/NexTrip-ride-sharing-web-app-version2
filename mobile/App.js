@@ -11,6 +11,7 @@ import RegisterScreen from "./src/screens/auth/RegisterScreen";
 import PassengerHomeScreen from "./src/screens/passenger/PassengerHomeScreen";
 import DriverHomeScreen from "./src/screens/driver/DriverHomeScreen";
 import TripsScreen from "./src/screens/shared/TripsScreen";
+import ProfileScreen from "./src/screens/shared/ProfileScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -69,6 +70,11 @@ function AppNavigator() {
               component={TripsScreen}
               options={{ title: "My Trips" }}
             />
+            <Stack.Screen
+              name="Profile"
+              component={ProfileScreen}
+              options={{ title: "Profile" }}
+            />
           </>
         ) : (
           <>
@@ -81,6 +87,11 @@ function AppNavigator() {
               name="Trips"
               component={TripsScreen}
               options={{ title: "My Trips" }}
+            />
+            <Stack.Screen
+              name="Profile"
+              component={ProfileScreen}
+              options={{ title: "Profile" }}
             />
           </>
         )}

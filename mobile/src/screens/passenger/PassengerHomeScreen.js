@@ -24,6 +24,7 @@ export default function PassengerHomeScreen({ navigation }) {
   const [dropoffAddress, setDropoffAddress] = useState("Destination");
   const [vehicleType, setVehicleType] = useState("BIKE");
   const [estimate, setEstimate] = useState(null);
+  const [currentTrip, setCurrentTrip] = useState(null);
   const [status, setStatus] = useState("Set pickup and destination.");
   const [loading, setLoading] = useState(false);
 
@@ -36,11 +37,13 @@ export default function PassengerHomeScreen({ navigation }) {
       setStatus(`Matching with ${payload.driverName || "driver"}...`);
     });
     socket.on("trip:accepted", ({ trip }) => {
+      setCurrentTrip(trip);
       setStatus(`Accepted by ${trip.driver?.user?.name || "driver"}.`);
     });
     socket.on("trip:driver-arrived", () => setStatus("Driver arrived."));
     socket.on("trip:started", () => setStatus("Trip started."));
     socket.on("trip:completed", ({ trip }) => {
+      setCurrentTrip(trip);
       setStatus(`Trip completed. Final fare BDT ${trip.finalFare}.`);
     });
     socket.on("trip:no-drivers-available", () => {
@@ -137,10 +140,27 @@ export default function PassengerHomeScreen({ navigation }) {
         vehicleType,
         paymentMethod: "CASH",
       });
+      setCurrentTrip(data.trip);
       setStatus(data.message);
       Alert.alert("Ride requested", "Matching started.");
     } catch (error) {
       Alert.alert("Booking failed", error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleCancelTrip() {
+    if (!currentTrip) return;
+
+    setLoading(true);
+    try {
+      const data = await api.cancelTrip(currentTrip.id);
+      setCurrentTrip(data.trip);
+      setStatus(data.message);
+      Alert.alert("Cancelled", "Trip cancelled.");
+    } catch (error) {
+      Alert.alert("Cancel failed", error.message);
     } finally {
       setLoading(false);
     }
@@ -153,9 +173,14 @@ export default function PassengerHomeScreen({ navigation }) {
           <Text style={styles.title}>Passenger</Text>
           <Text style={styles.subtitle}>{status}</Text>
         </View>
-        <Pressable onPress={signOut}>
-          <Text style={styles.link}>Logout</Text>
-        </Pressable>
+        <View style={styles.topLinks}>
+          <Pressable onPress={() => navigation.navigate("Profile")}>
+            <Text style={styles.link}>Profile</Text>
+          </Pressable>
+          <Pressable onPress={signOut}>
+            <Text style={styles.link}>Logout</Text>
+          </Pressable>
+        </View>
       </View>
 
       <View style={styles.mapBox}>
@@ -257,6 +282,17 @@ export default function PassengerHomeScreen({ navigation }) {
           />
         </View>
         <PrimaryButton title="Book Ride" onPress={handleBook} loading={loading} />
+        {currentTrip &&
+          ["REQUESTED", "ACCEPTED", "DRIVER_ARRIVED"].includes(
+            currentTrip.status
+          ) && (
+            <PrimaryButton
+              title="Cancel Current Trip"
+              variant="danger"
+              onPress={handleCancelTrip}
+              loading={loading}
+            />
+          )}
         <PrimaryButton
           title="My Trips"
           variant="outline"
@@ -285,6 +321,10 @@ const styles = StyleSheet.create({
   link: {
     color: theme.colors.primary,
     fontWeight: "800",
+  },
+  topLinks: {
+    alignItems: "flex-end",
+    gap: 8,
   },
   mapBox: {
     borderColor: theme.colors.border,

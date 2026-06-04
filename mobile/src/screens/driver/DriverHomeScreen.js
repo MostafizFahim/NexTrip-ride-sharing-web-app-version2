@@ -198,9 +198,14 @@ export default function DriverHomeScreen({ navigation }) {
           <Text style={styles.title}>Driver</Text>
           <Text style={styles.subtitle}>{message}</Text>
         </View>
-        <Pressable onPress={signOut}>
-          <Text style={styles.link}>Logout</Text>
-        </Pressable>
+        <View style={styles.topLinks}>
+          <Pressable onPress={() => navigation.navigate("Profile")}>
+            <Text style={styles.link}>Profile</Text>
+          </Pressable>
+          <Pressable onPress={signOut}>
+            <Text style={styles.link}>Logout</Text>
+          </Pressable>
+        </View>
       </View>
 
       <View style={styles.card}>
@@ -283,7 +288,15 @@ export default function DriverHomeScreen({ navigation }) {
             />
           )}
           {activeTrip.status === "ACCEPTED" && (
-            <PrimaryButton title="Arrived" onPress={markArrived} loading={loading} />
+            <>
+              <PrimaryButton title="Arrived" onPress={markArrived} loading={loading} />
+              <PrimaryButton
+                title="Cancel Trip"
+                variant="danger"
+                onPress={() => runTripAction(() => api.cancelTrip(activeTrip.id))}
+                loading={loading}
+              />
+            </>
           )}
           {activeTrip.status === "DRIVER_ARRIVED" && (
             <PrimaryButton
@@ -331,6 +344,10 @@ const styles = StyleSheet.create({
   link: {
     color: theme.colors.primary,
     fontWeight: "800",
+  },
+  topLinks: {
+    alignItems: "flex-end",
+    gap: 8,
   },
   card: {
     backgroundColor: theme.colors.surface,

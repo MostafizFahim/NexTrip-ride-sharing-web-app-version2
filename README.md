@@ -14,6 +14,14 @@ The backend is local-first and intentionally simple for learning. The current we
 
 ## Local Development
 
+Full local setup, Redis on Windows, demo accounts, and manual test flow:
+
+[docs/LOCAL_SETUP.md](docs/LOCAL_SETUP.md)
+
+Postman collection:
+
+[docs/NexTrip.postman_collection.json](docs/NexTrip.postman_collection.json)
+
 Backend:
 
 ```bash

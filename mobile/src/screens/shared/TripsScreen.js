@@ -1,6 +1,8 @@
 import React, { useCallback, useState } from "react";
 import {
+  Alert,
   ActivityIndicator,
+  Pressable,
   StyleSheet,
   Text,
   View,
@@ -31,6 +33,24 @@ export default function TripsScreen() {
     }, [loadTrips])
   );
 
+  async function rateTrip(tripId, score) {
+    try {
+      await api.rateTrip(tripId, { score });
+      Alert.alert("Thanks", "Rating submitted.");
+    } catch (error) {
+      Alert.alert("Rating failed", error.message);
+    }
+  }
+
+  async function cancelTrip(tripId) {
+    try {
+      await api.cancelTrip(tripId);
+      await loadTrips();
+    } catch (error) {
+      Alert.alert("Cancel failed", error.message);
+    }
+  }
+
   return (
     <Screen>
       <Text style={styles.title}>My Trips</Text>
@@ -56,6 +76,29 @@ export default function TripsScreen() {
             <Text style={styles.fare}>
               BDT {trip.finalFare || trip.estimatedFare}
             </Text>
+            {["REQUESTED", "ACCEPTED", "DRIVER_ARRIVED"].includes(
+              trip.status
+            ) && (
+              <Pressable
+                style={styles.cancelButton}
+                onPress={() => cancelTrip(trip.id)}
+              >
+                <Text style={styles.cancelText}>Cancel Trip</Text>
+              </Pressable>
+            )}
+            {trip.status === "COMPLETED" && (
+              <View style={styles.ratingRow}>
+                {[1, 2, 3, 4, 5].map((score) => (
+                  <Pressable
+                    key={score}
+                    style={styles.ratingButton}
+                    onPress={() => rateTrip(trip.id, score)}
+                  >
+                    <Text style={styles.ratingText}>{score}</Text>
+                  </Pressable>
+                ))}
+              </View>
+            )}
           </View>
         ))}
 
@@ -106,6 +149,35 @@ const styles = StyleSheet.create({
   fare: {
     color: theme.colors.success,
     fontSize: 16,
+    fontWeight: "900",
+  },
+  cancelButton: {
+    alignItems: "center",
+    borderColor: theme.colors.danger,
+    borderRadius: 6,
+    borderWidth: 1,
+    marginTop: theme.spacing.sm,
+    padding: theme.spacing.sm,
+  },
+  cancelText: {
+    color: theme.colors.danger,
+    fontWeight: "800",
+  },
+  ratingRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: theme.spacing.sm,
+  },
+  ratingButton: {
+    alignItems: "center",
+    backgroundColor: theme.colors.softPrimary,
+    borderRadius: 6,
+    height: 36,
+    justifyContent: "center",
+    width: 36,
+  },
+  ratingText: {
+    color: theme.colors.primary,
     fontWeight: "900",
   },
   empty: {

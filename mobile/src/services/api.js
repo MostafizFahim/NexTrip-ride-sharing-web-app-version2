@@ -48,6 +48,12 @@ export const api = {
       method: "POST",
       body: payload,
     }),
+  me: () => request("/users/me"),
+  updateMe: (payload) =>
+    request("/users/me", {
+      method: "PATCH",
+      body: payload,
+    }),
   driverSetup: (payload) =>
     request("/driver/setup", {
       method: "POST",
@@ -81,5 +87,14 @@ export const api = {
     request(`/trips/${tripId}/complete`, {
       method: "POST",
       body: actualDistanceKm ? { actualDistanceKm } : {},
+    }),
+  cancelTrip: (tripId) =>
+    request(`/trips/${tripId}/cancel`, {
+      method: "POST",
+    }),
+  rateTrip: (tripId, payload) =>
+    request(`/trips/${tripId}/rate`, {
+      method: "POST",
+      body: payload,
     }),
 };

@@ -1,15 +1,11 @@
 const router = require("express").Router();
+const { getMe, updateMe, getUserById } = require("../controllers/user.controller");
+const { requireAuth } = require("../middleware/auth");
 
-router.get("/me", (req, res) => {
-  res.status(501).json({ message: "Current user endpoint scaffolded." });
-});
+router.use(requireAuth);
 
-router.get("/:id", (req, res) => {
-  res.status(501).json({ message: "User details endpoint scaffolded." });
-});
-
-router.patch("/:id", (req, res) => {
-  res.status(501).json({ message: "User update endpoint scaffolded." });
-});
+router.get("/me", getMe);
+router.patch("/me", updateMe);
+router.get("/:id", getUserById);
 
 module.exports = router;

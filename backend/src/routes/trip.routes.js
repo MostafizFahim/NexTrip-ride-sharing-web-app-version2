@@ -9,6 +9,8 @@ const {
   markDriverArrived,
   startTrip,
   completeTrip,
+  cancelTrip,
+  rateTrip,
 } = require("../controllers/trip.controller");
 const { requireAuth, requireRole } = require("../middleware/auth");
 
@@ -22,6 +24,8 @@ router.post("/:id/decline", requireRole("DRIVER"), declineTrip);
 router.post("/:id/arrived", requireRole("DRIVER"), markDriverArrived);
 router.post("/:id/start", requireRole("DRIVER"), startTrip);
 router.post("/:id/complete", requireRole("DRIVER"), completeTrip);
+router.post("/:id/cancel", cancelTrip);
+router.post("/:id/rate", rateTrip);
 router.get("/:id", getTrip);
 
 module.exports = router;
