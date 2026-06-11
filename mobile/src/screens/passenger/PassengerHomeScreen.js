@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import * as Location from "expo-location";
-import MapView, { Marker } from "react-native-maps";
 
 import PrimaryButton from "../../components/PrimaryButton";
+import MapView, { Marker } from "../../components/RideMap";
 import Screen from "../../components/Screen";
 import TextField from "../../components/TextField";
 import { DEFAULT_REGION } from "../../config/api";
