@@ -199,3 +199,14 @@ EXPO_PUBLIC_SOCKET_URL=http://192.168.x.x:5000
 11. Driver completes trip.
 12. Passenger rates the trip.
 13. Admin dashboard should show trips, drivers, and revenue.
+
+## Automated smoke test
+
+After the backend database is migrated, you can test the full backend and Socket.IO ride flow with one command:
+
+```bash
+cd backend
+npm run smoke:trip-flow
+```
+
+The smoke test starts the backend on a temporary local port, creates QA admin/passenger/driver users, approves the driver, sends live driver location, books a ride, accepts it through Socket.IO, completes the trip, submits a rating, and checks the admin dashboard. It uses `REDIS_MODE=memory` by default and stores the QA users/trip in your local PostgreSQL database.

@@ -9,7 +9,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "prisma:seed": "node prisma/seed.js"
+    "prisma:seed": "node prisma/seed.js",
+    "smoke:trip-flow": "node scripts/smoke-trip-flow.js"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.7",
-    "prisma": "^5.22.0"
+    "prisma": "^5.22.0",
+    "socket.io-client": "^4.8.3"
   }
 }
