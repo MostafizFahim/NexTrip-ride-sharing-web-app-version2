@@ -1,6 +1,7 @@
 const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
 const prisma = require("../lib/prisma");
+const { getAllowedOrigins } = require("../config/cors");
 const { addDriverLocation } = require("../services/redis.service");
 const {
   acceptTripRequest,
@@ -9,10 +10,7 @@ const {
 const { setIo } = require("./io-store");
 
 function configureSockets(server) {
-  const allowedOrigins = [
-    process.env.FRONTEND_ORIGIN || "http://localhost:5173",
-    process.env.MOBILE_ORIGIN || "http://localhost:8081",
-  ];
+  const allowedOrigins = getAllowedOrigins();
 
   const io = new Server(server, {
     cors: {

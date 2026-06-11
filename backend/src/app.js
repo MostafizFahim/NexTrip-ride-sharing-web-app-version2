@@ -4,16 +4,14 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const routes = require("./routes");
+const { getAllowedOrigins } = require("./config/cors");
 const { notFound, errorHandler } = require("./middleware/error");
 
 const app = express();
 
 app.use(
   cors({
-    origin: [
-      process.env.FRONTEND_ORIGIN || "http://localhost:5173",
-      process.env.MOBILE_ORIGIN || "http://localhost:8081",
-    ],
+    origin: getAllowedOrigins(),
     credentials: true,
   })
 );

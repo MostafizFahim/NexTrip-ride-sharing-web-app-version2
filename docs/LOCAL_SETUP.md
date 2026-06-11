@@ -21,6 +21,7 @@ This is the best option when you do not want PostgreSQL, Redis, or Docker instal
 ```text
 DATABASE_URL=your-hosted-postgresql-connection-string
 REDIS_MODE=memory
+FRONTEND_ORIGIN=http://localhost:3000
 ```
 
 Then run:
